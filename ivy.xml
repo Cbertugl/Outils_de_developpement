@@ -1,0 +1,10 @@
+<ivy-module version="2.0">
+	<info organisation="apache" module="helle-ivy"/>
+	<dependencies>
+		<dependency org="com.opencsv" name="opencsv" rev="3.9">
+			<artifact name="opencsv" type="jar" />
+			<ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1" pathid="lib.path.id" inline="true"/>
+
+		</dependecy>
+	</dependencies>
+</ivy-module>
