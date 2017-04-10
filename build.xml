@@ -71,13 +71,9 @@
     </target>    
 	
     <target name="resolve" description="retrieve dependencies with ivy">
-        <ivy:resolve />
-        <!-- résoudre les dépendances déclarées dans ivy.xml -->
+        <ivy:resolve/>
         <ivy:cachepath pathid="lib.path.id"/>
-        <!-- définir la variable lib.path.id -->
     </target>
-
-
 
 
 	<!-- ================================= 
@@ -86,13 +82,12 @@
          ================================= -->
     <target name="go" depends="install-ivy, generate-src, resolve" description="--&gt; resolve dependencies, compile and run the project">
 		<echo message="using ivy to resolve commons-lang 2.1..."/>
-        <pathconvert property="tmp" refid="lib.path.id"/>
-        <echo>Dans le Classpath :${tmp}</echo>
         <!-- here comes the magic line: asks ivy to resolve a dependency on 
              commons-lang 2.1 and to build an ant path with it from its cache  -->
-        <!-- ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1" pathid="lib.path.id" inline="true"/-->
-        
+        <ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1" pathid="lib.path.id" inline="true"/>
 		<echo message="compiling..."/>
+        <pathconvert property="tmp" refid="lib.path.id"/>
+        <echo>Dans le Classpath:${tmp}</echo>
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id"/>
         
@@ -111,8 +106,6 @@ Let's go!
             </classpath>
         </java>
     </target>
-
-
 
 	<!-- ================================= 
           target: generate-src
