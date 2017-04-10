@@ -1,4 +1,5 @@
-<ivy-module version="2.0" xmlns:ivy="antlib:org.apache.ivy.ant">
+<ivy-module version="2.0">
+<!-- xmlns:ivy="antlib:org.apache.ivy.ant"-->
 	<info organisation="apache" module="helle-ivy"/>
 	<dependencies>
 		<dependency org="com.opencsv" name="opencsv" rev="3.9">
