@@ -95,8 +95,15 @@
 We are now ready to execute our simple program with its dependency on commons-lang.
 Let's go!
 		</echo>
-        
-    </target>
+
+
+    <!--Exercice 17, brouillon-->
+    <!--target name="report" depends="go">
+        <target name"create-report-directory">
+
+            <ivy:report todir="report"/>
+        </target>
+    </target-->
 
     <target name="run" depends="go" description="question 7">
         <java classname="example.Hello">
