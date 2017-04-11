@@ -16,7 +16,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<project name="go-ivy" default="go" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="go-ivy" default="report" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- 
         this build file is a self contained project: it doesn't require anything else 
         that ant 1.6.2 or greater and java 1.4 or greater properly installed.
@@ -41,17 +41,15 @@
 	<property name="ivy.install.version" value="2.0.0-beta1"/>
 	<property name="ivy.jar.dir" value="${basedir}/ivy"/>
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
-
-    <property name="build.dir" value="build"/>
-    <property name="src.dir" value="src"/>
+  <property name="build.dir" value="build"/>
+  <property name="src.dir" value="src"/>
     
-    
-    <target name="download-ivy" unless="skip.download">
-    	<mkdir dir="${ivy.jar.dir}"/>
+  <target name="download-ivy" unless="skip.download">
+    <mkdir dir="${ivy.jar.dir}"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
 		<echo message="installing ivy..."/>
-    	<get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
-    </target>
+    <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
+  </target>
     
     <!-- ================================= 
           target: install-ivy         
@@ -59,60 +57,55 @@
             if you already have ivy in your ant lib, you can simply remove this
             target and the dependency the 'go' target has on it
          ================================= -->
-    <target name="install-ivy" depends="download-ivy" description="--&gt; install ivy">
-    	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
-    	      it into ant's lib dir (note that the latter copy will always take precedence).
-    	      We will not fail as long as local lib dir exists (it may be empty) and
-    	      ivy is in at least one of ant's lib dir or the local lib dir. -->
-    	<path id="ivy.lib.path">
-    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-    	</path>
-    	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
-    </target>    
+  <target name="install-ivy" depends="download-ivy" description="--&gt; install ivy">
+    <!-- try to load ivy here from local ivy dir, in case the user has not already dropped it into ant's lib dir (note that the latter copy will always take precedence). We will not fail as long as local lib dir exists (it may be empty) and ivy is in at least one of ant's lib dir or the local lib dir. -->
+    <path id="ivy.lib.path">
+    	<fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    </path>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+  </target>    
 	
-    <target name="resolve" description="retrieve dependencies with ivy">
-        <ivy:resolve/>
-        <ivy:cachepath pathid="lib.path.id"/>
-    </target>
+  <target name="resolve" description="retrieve dependencies with ivy">
+    <ivy:resolve/>
+    <ivy:cachepath pathid="lib.path.id"/>
+  </target>
 
 
 	<!-- ================================= 
           target: go
                     Go ivy, go!
          ================================= -->
-    <target name="go" depends="install-ivy, generate-src, resolve" description="--&gt; resolve dependencies, compile and run the project">
-		<echo message="using ivy to resolve commons-lang 2.1..."/>
+  
+  <!--rajouter generate-src dans depends si besoin-->
+  <target name="go" depends="install-ivy, resolve" description="--&gt; resolve dependencies, compile and run the project">
+	  <echo message="using ivy to resolve commons-lang 2.1..."/>
         <!-- here comes the magic line: asks ivy to resolve a dependency on 
              commons-lang 2.1 and to build an ant path with it from its cache  -->
-        <ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1" pathid="lib.path.id" inline="true"/>
-		<echo message="compiling..."/>
-        <pathconvert property="tmp" refid="lib.path.id"/>
-        <echo>Dans le Classpath:${tmp}</echo>
-        <mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id"/>
-        
+    <pathconvert property="tmp" refid="lib.path.id"/>
+    <echo>Dans le Classpath :${tmp}</echo>
+	  <echo message="compiling..."/>
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id"/>   
 		<echo>
 We are now ready to execute our simple program with its dependency on commons-lang.
 Let's go!
 		</echo>
+  </target>
 
+  <target name="run" depends="go" description="question 7">
+    <java classname="example.Hello">
+      <classpath>
+        <path refid="lib.path.id"/>
+        <path location="${build.dir}"/>
+      </classpath>
+    </java>
+  </target>
 
-    <!--Exercice 17, brouillon-->
-    <!--target name="report" depends="go">
-        <target name"create-report-directory">
-
-            <ivy:report todir="report"/>
-        </target>
-    </target-->
-
-    <target name="run" depends="go" description="question 7">
-        <java classname="example.Hello">
-            <classpath>
-                <path refid="lib.path.id"/>
-                <path location="${build.dir}"/>
-            </classpath>
-        </java>
-    </target>
+  <!--Exercice 17, brouillon-->
+  <target name="report" depends="run">
+    <mkdir dir="report"/>
+    <ivy:report todir="report"/>
+  </target>
 
 	<!-- ================================= 
           target: generate-src
@@ -120,9 +113,9 @@ Let's go!
             source code to a file. In real life this file would already be
             present on your file system, and this target wouldn't be necessary.
          ================================= -->
-    <!--target name="generate-src">
-        <mkdir dir="${src.dir}/example"/>
-        <echo file="${src.dir}/example/Hello.java">
+  <!--target name="generate-src">
+    <mkdir dir="${src.dir}/example"/>
+    <echo file="${src.dir}/example/Hello.java">
 package example;
 
 import org.apache.commons.lang.WordUtils;
@@ -135,30 +128,21 @@ public class Hello {
                                 + " : " + WordUtils.capitalizeFully(message));
     }
 }
-        </echo>
-    </target-->
+    </echo>
+  </target-->
 	
-    <!-- ================================= 
-          target: clean              
-         ================================= -->
-    <target name="clean" description="--&gt; clean the project">
-        <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${src.dir}"/>
-            <fileset dir="${build.dir}"/>
-    	</delete>
-    </target>
-	
-    <!-- ================================= 
-          target: clean-ivy              
-         ================================= -->
+  <target name="clean" description="--&gt; clean the project">
+    <delete includeemptydirs="true" quiet="true">
+      <fileset dir="${src.dir}"/>
+        <fileset dir="${build.dir}"/>
+    </delete>
+  </target>
+
 	<target name="clean-ivy" description="--&gt; clean the ivy installation">
 		<delete dir="${ivy.jar.dir}"/>
 	</target>
 	
-    <!-- ================================= 
-          target: clean-cache              
-         ================================= -->
 	<target name="clean-cache" depends="install-ivy" description="--&gt; clean the ivy cache">
-		<ivy:cleancache/>
+    <ivy:cleancache/>
 	</target>
 </project>

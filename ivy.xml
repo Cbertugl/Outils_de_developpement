@@ -4,7 +4,9 @@
 	<dependencies>
 		<dependency org="com.opencsv" name="opencsv" rev="3.9">
 			<artifact name="opencsv" type="jar"/>
-			<!--ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1" pathid="lib.path.id" inline="true"/-->
+		</dependency>
+		<dependency org="commons-lang" name="commons-lang" rev="2.1">
+			<artifact name="commons-lang" type="jar"/>
 		</dependency>
 	</dependencies>
 </ivy-module>

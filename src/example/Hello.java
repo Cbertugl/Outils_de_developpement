@@ -1,6 +1,10 @@
 
 package example;
 
+import com.opencsv.*;
+import java.io.*;
+import java.util.*;
+import java.lang.*;
 import org.apache.commons.lang.WordUtils;
 
 public class Hello {
@@ -9,18 +13,45 @@ public class Hello {
         System.out.println("standard message : " + message);
         System.out.println("capitalized by " + WordUtils.class.getName() 
                                 + " : " + WordUtils.capitalizeFully(message));
-        //int monmax = 0;
-        int nb = 0;
-        CSVReader reader = new CSVReader(new FileReader("data.csv"));
-        List<String[]>myEntries = reader.readAll();
         
-        //parcourt
-		for(int i=0; i<myEntries.size(); i++)
-            nb=myEntries.get(i);
-            System.out.println(nb);
+        int monmax = 0;
+        int x;
+        String[] nbstr;
+        String[] nb;
+        try
+        {
+            CSVReader reader = new CSVReader(new FileReader("data.csv"));
+            try
+            {
+                List<String[]>myEntries = reader.readAll();
 
-
-        System.out.println("Nombre lu:"+nb);
-    }
+                for(int i=0; i<myEntries.size(); i++)
+                {
+                    System.out.println("Ligne:"+i);
+                    nbstr=myEntries.get(i);
+                    //parcourt
+                    nb=nbstr[0].split(";");
+                    for(int k=0; k<nb.length; k++)
+                    {
+                        x = Integer.parseInt(nb[k]);
+                        System.out.println("Nombre lu:"+x);
+                        if(monmax == 0 || x>monmax)
+                        {
+                            monmax=x;
+                        } 
+                    }
+                }    
+            System.out.println("Le max:"+monmax);
+            }
+            catch (IOException e)
+            {
+                System.out.println("Erreur: IOException");
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            System.out.println("Erreur: FileNotFoundException");
+        }
+    } 
 }
         
